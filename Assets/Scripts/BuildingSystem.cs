@@ -14,7 +14,7 @@ public class BuildingSystem : MonoBehaviour
     public Tilemap foregroundTilemap;
     
     private static Dictionary<TileType, TileBase> tileBases = new Dictionary<TileType, TileBase>();
-    private Building temp;
+    public Building temp; // changed to public to use with selectionmanager script
     private Vector3 prevPos;
     private BoundsInt prevArea;
 
