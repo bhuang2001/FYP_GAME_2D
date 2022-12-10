@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -3610416099970773369}
   m_Layer: 0
   m_Name: Computer prefab
-  m_TagString: NetworkEntities
+  m_TagString: Host
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -44,10 +44,10 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.000000059604645, y: 0.31886682}
+  m_Offset: {x: 0.011239797, y: 0.29919708}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -58,7 +58,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.8263136, y: 1.0298309}
+  m_Size: {x: 0.89375275, y: 1.0691705}
   m_EdgeRadius: 0
 --- !u!114 &-3610416099970773369
 MonoBehaviour:
@@ -167,7 +167,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7272036983240732646}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
