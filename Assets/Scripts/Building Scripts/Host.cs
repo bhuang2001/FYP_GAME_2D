@@ -7,6 +7,8 @@ public class Host : MonoBehaviour
 {
     // store the host name
     public string hostName;
+    // store number of the host
+    public int hostNumber;
     // store host IP address
     public uint hostIPAddress;
     // store link interface it is associated with

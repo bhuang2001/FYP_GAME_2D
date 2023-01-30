@@ -186,6 +186,7 @@ public class BuildingSystem : MonoBehaviour
         temp = Instantiate(entity, Vector3.zero, Quaternion.identity).GetComponent<Building>();
         temp.gameObject.AddComponent<Router>();
         temp.gameObject.name = "Router" + routerNum;
+        temp.gameObject.GetComponent<Router>().routerNumber = routerNum;
         routerNum++;
         FollowBuilding();
     }
@@ -196,6 +197,7 @@ public class BuildingSystem : MonoBehaviour
         temp= Instantiate(entity, Vector3.zero, Quaternion.identity).GetComponent<Building>();
         temp.gameObject.AddComponent<Host>();
         temp.gameObject.name = "Host" + hostNum;
+        temp.gameObject.GetComponent<Host>().hostNumber = hostNum;
         hostNum++;
         FollowBuilding();
     }

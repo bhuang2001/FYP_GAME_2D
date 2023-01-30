@@ -16,6 +16,7 @@ public class LinkManager : MonoBehaviour
     private int currLines = 0;
     // when a button is pressed to add link, this turns true
     private bool addLink = false;
+    public bool costEntered;
     // number to keep track of how many times the orientation of the link is pressed
     private int toggleCount = 0;
     // subnetNum keeps track of the number of subnets in each quadrant 
@@ -30,6 +31,7 @@ public class LinkManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
        // enterCostUI.SetActive(false);
        // inputField = GameObject.Find("UI/EnterCost/Canvas/InputWindow/InputField").GetComponent<TMP_InputField>();
     }
@@ -53,6 +55,8 @@ public class LinkManager : MonoBehaviour
 
     private void placeLink () {
         if (addLink == true) {
+            // Whenever link is added, the cost is not entered yet so set state to false
+            costEntered = false;
             if (Input.GetMouseButtonDown(0)) 
             {
                 if (line == null)
@@ -109,10 +113,11 @@ public class LinkManager : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
- 
+                
                 enterCostUI.SetActive(true);
-                addLink = false;
                 currLines++;
+                addLink = false;
+
             }
 
         }
@@ -126,6 +131,7 @@ public class LinkManager : MonoBehaviour
     // When pressing "Enter" button in the enterCost UI
     // Only after link cost is entered, then colliders initiated so the parameters can be transferred to the 
     // host and router
+    // Also assigns the positions of the start, middle and end coordinates
     public void getCost()
     {
         line.gameObject.AddComponent<Link>();
@@ -137,6 +143,9 @@ public class LinkManager : MonoBehaviour
         assignSubnetIP();
         enterCostUI.SetActive(false);
         line = null;
+        costEntered = true;
+        // After cost is entered , then set the addLink to false so it can only be pressed again afterwards
+    
     }
     // Helper function which assign an IP address to the link created so that the router and host 
     // or router and router connected can take 
