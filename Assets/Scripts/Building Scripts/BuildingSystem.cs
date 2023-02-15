@@ -8,7 +8,8 @@ using UnityEngine.EventSystems;
 // temp tile map = foreground tile map
 public class BuildingSystem : MonoBehaviour
 {
-    private int routerNum ;
+    // public so RoutingInformation can read from it
+    public int routerNum ;
     private int hostNum ; 
     public static BuildingSystem current;
     public GridLayout gridlayout;

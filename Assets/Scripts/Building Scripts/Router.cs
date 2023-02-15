@@ -10,7 +10,9 @@ public class Router : MonoBehaviour
     // this lets the router know if it needs to update its routing tables or not
     public bool update, updateRIP;
     // status of the router, true by default
-    public bool routerStatus = true;
+    public bool prevRouterStatus,routerStatus ;
+    //  to store previuos status of global power of network
+    public bool prevGlobalPower;
     // Using maximum routers as 10 for now
     public const int maxRouters = 10;
     // Adjacency matrixes for each OSPF, RIP and the one that stores which one is being used
@@ -53,7 +55,7 @@ public class Router : MonoBehaviour
     //store the connected entity(routers and hosts in order) and its cost
     public Dictionary<string,int> connections = new Dictionary<string,int>();
     // to access the entities connected on the link
-    private Link link;
+    public Link link;
     // temporary collider2d to be able to access the link via the collider child
     private Collider2D temp;
     // to access the adjacency matrices for weights and link interfaces 
@@ -66,16 +68,24 @@ public class Router : MonoBehaviour
     // for debug purposes to see if components are entered in order 
     public List <string> connectionsList = new List<string>();
     private WaitForSeconds delay = new WaitForSeconds(5);
+    // To access the sprite rendere component to make it transparent if it is off
+    private SpriteRenderer spriteRenderer;
     
     
     // Start is called before the first frame update
     void Start()
     {
-        
-        routerName = gameObject.name;
-        //InitializeRigidBody();
+        spriteRenderer = gameObject.GetComponentInChildren<SpriteRenderer>();
         graphCreator = GameObject.Find("Graph Creator").GetComponent<GraphCreator>();
-        
+        // Make router status and previous global power 
+        // true at start so that the update takes care of the actual status
+        routerStatus = true;
+        prevRouterStatus = routerStatus;
+        prevGlobalPower = true;
+        routerName = gameObject.name;
+        //gameObject.layer = LayerMask.NameToLayer("Buildings");
+        //collisionMask = Physics2D.GetLayerCollisionMask(gameObject.layer);
+        //InitializeRigidBody();
 
     //    StartCoroutine(DebugMessage());
     }
@@ -83,6 +93,82 @@ public class Router : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
+        // Check to see if global power was toggled
+        if(prevGlobalPower != graphCreator.globalPower)
+        {
+            // power is on, then router is on
+            if(graphCreator.globalPower == true)
+            {
+                routerStatus = true;
+            }
+            // power is off, then router is off
+            else if (graphCreator.globalPower == false)
+            {
+                routerStatus = false;
+            }
+        }
+        // update the previous state to the current state
+        prevGlobalPower = graphCreator.globalPower;
+        
+        if(prevRouterStatus != routerStatus)
+        {
+            Debug.Log("Change in router status");
+            if(routerStatus == false)
+            {
+                // Make router transparent if it is off
+                SetTransparent();
+                // Send update to all links that this router is connected on
+                foreach(var links in linkInterface)
+                {
+                    Link linkComponent = GameObject.Find(links).GetComponent<Link>();
+                    GameObject object1 = GameObject.Find(linkComponent.entity1);
+                    GameObject object2 = GameObject.Find(linkComponent.entity2);
+                    if(object1.CompareTag("Router") && object2.CompareTag("Router"))
+                    {
+                        Router router1 = object1.GetComponent<Router>();
+                        Router router2 = object2.GetComponent<Router>();
+                        if(router1.routerStatus == false || router2.routerStatus == false) 
+                        {
+                            linkComponent.indirectOn = false;
+                        }
+                    }
+                    else 
+                    {
+                        linkComponent.indirectOn = false;
+                    }
+                }
+            }
+            else if (routerStatus == true)
+            {
+                SetOpaque();
+                foreach(var links in linkInterface)
+                {
+                    Link linkComponent = GameObject.Find(links).GetComponent<Link>();
+                    GameObject object1 = GameObject.Find(linkComponent.entity1);
+                    GameObject object2 = GameObject.Find(linkComponent.entity2);
+                    // Checking to see if the link connects two routers
+                    if(object1.CompareTag("Router") && object2.CompareTag("Router"))
+                    {
+                        Router router1 = object1.GetComponent<Router>();
+                        Router router2 = object2.GetComponent<Router>();
+                        // only if both routers are on , then this link is enabled
+                        if(router1.routerStatus == true && router2.routerStatus == true) 
+                        {
+                            linkComponent.indirectOn = true;
+                        }
+                    }
+                    // If the link is between a host and router then just enable the link
+                    else 
+                    {
+                        linkComponent.indirectOn = true;
+                    }
+                }
+            }
+        }
+        // update previous router status to the current router status after every check
+        prevRouterStatus = routerStatus;
+
         // set the updateRIP status equal to the updateSignal status 
         updateRIP = graphCreator.updateSignalRIP;
         // update is provided from any link additions
@@ -141,17 +227,22 @@ public class Router : MonoBehaviour
        // {
         Collider2D [] myCollider = new Collider2D [1];
         ContactFilter2D contactFilter = new ContactFilter2D().NoFilter();
+        
         int colliderNum = other.OverlapCollider(contactFilter,myCollider);
         temp = other;
-        // adds all the link game objects the router is connected to
-        linkInterface.Add(other.transform.parent.name);
-        // adds all routers this router is connected to into the router's list of neighbour routers
-        Invoke("AddNeighbourRouter",0f);
-        // adds all the hosts connected to this router into the router's list of hosts
-        Invoke("AddHost",0f);
-        // adds all routers and hosts connected to this router in a dictionary wiht its costs
-        // cost for router to host is 0
-        Invoke("AddConnections",0f);
+        Debug.Log("Collider detected is :" + other.gameObject.name);
+        if(other.gameObject.CompareTag("LinkCollider"))
+        {
+            // adds all the link game objects the router is connected to
+            linkInterface.Add(other.transform.parent.name);
+            // adds all routers this router is connected to into the router's list of neighbour routers
+            Invoke("AddNeighbourRouter",0f);
+            // adds all the hosts connected to this router into the router's list of hosts
+            Invoke("AddHost",0f);
+            // adds all routers and hosts connected to this router in a dictionary wiht its costs
+            // cost for router to host is 0
+            Invoke("AddConnections",0f);
+        }
       //  }
         
     }
@@ -167,7 +258,7 @@ public class Router : MonoBehaviour
     {
         link = temp.transform.parent.GetComponent<Link>();
         // the router adds the other router if it is a router into its neighbouring routers
-        // Debug.Log("The entities are " + link.entity1 + " and " + link.entity2);
+         Debug.Log("The entities are " + link.entity1 + " and " + link.entity2);
         if(routerName != link.entity1 && link.entity1.Contains("Router")) 
         {
             neighbourRouters.Add(link.entity1);
@@ -508,5 +599,17 @@ public class Router : MonoBehaviour
         printSolution(distanceRIP,maxRouters);
     }
 
+    private void SetTransparent()
+    {
+        Color currentColour = spriteRenderer.material.color;
+        currentColour.a = 0.5f;
+        spriteRenderer.material.color = currentColour;
+    }
 
+    private void SetOpaque()
+    {
+        Color currentColour = spriteRenderer.material.color;
+        currentColour.a = 1f;
+        spriteRenderer.material.color = currentColour;
+    }
 }

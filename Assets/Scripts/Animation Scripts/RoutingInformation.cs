@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class RoutingInformation : MonoBehaviour
 {
-
+// This is to access the number of routers that created on the network so
+// the GetSourceRouter() function knows when to stop checking
+private BuildingSystem buildingSystem;
 // glow material is for displaying routing information being transmitted
 // nonglow material is for the regular link material (white)
 public Material glow, nonglow;
@@ -40,6 +42,7 @@ private DataTransmission dataTransmission;
     // Start is called before the first frame update
     void Start()
     {
+        buildingSystem = GameObject.Find("Grid").GetComponent<BuildingSystem>();
         graphCreator = GameObject.Find("Graph Creator").GetComponent<GraphCreator>();
         dataTransmission = GameObject.Find("Data Transmission").GetComponent<DataTransmission>();
         helloTimer = 10f;
@@ -102,21 +105,25 @@ private DataTransmission dataTransmission;
     }
 
     // Lights up all links that are connected to routers as blue
+    // Make routing information updates(blue) show in front of the data transmission lines
     private void GlowLinks(List<string> links)
     {
         foreach(var name in links)
         {
             lr = GameObject.Find(name).GetComponent<LineRenderer>();
+            lr.sortingOrder = 3;
             SetColourGradient(blue,lr);
         }
     }
 
     // Returns the links back to white colour
+    // Set back to lowest sorting order when it returns to white
     private void DisableGlow(List<string> links)
     {
         foreach(var name in links)
         {
             lr = GameObject.Find(name).GetComponent<LineRenderer>();
+            lr.sortingOrder = 0;
             SetColourGradient(white,lr);
         }
     }
@@ -203,12 +210,19 @@ private DataTransmission dataTransmission;
 
     private Router GetSourceRouter()
     {
+        GameObject routerObj;
         int cnt = 0;
         string sourceRouterName;
         Router sourceRouter = null;
         while(sourceRouter == null)
         {
+            // If all routers are checked then exit while loop and return the null router
+            if (cnt >= buildingSystem.routerNum)
+            {
+                break;
+            }
             sourceRouterName = "Router" + cnt;
+            routerObj = GameObject.Find(sourceRouterName);
             sourceRouter = GameObject.Find(sourceRouterName).GetComponent<Router>();
             // if router is down then find next router as the source router
             if (sourceRouter.routerStatus == false)

@@ -10,6 +10,8 @@ using PriorityQueue;
 
 public class GraphCreator : MonoBehaviour
 {
+// stores the status of the network power 
+public bool globalPower;
 // the boolean variables keep track whether or not OSPF or RIP protocol is on
 // by default OSPF is on and RIP is off
 // updateSignal is off, when it is on it tells all routers to update its routing information if it is using RIP
@@ -81,6 +83,7 @@ public string[,] InitAdjMatrixLinks(string[,] AdjMatrix)
     // Start is called before the first frame update
     void Start()
     {   
+        globalPower = true;
         RI = GameObject.Find("Routing Information");
         RIComponent = GameObject.Find("Routing Information").GetComponent<RoutingInformation>();
         dataTransmission = GameObject.Find("Data Transmission").GetComponent<DataTransmission>();
@@ -196,5 +199,18 @@ public string[,] InitAdjMatrixLinks(string[,] AdjMatrix)
         // then it waits the periodic interval 
         updateSignalRIP = true;
         timeElapsed = 0f;
+    }
+
+    public void TogglePower()
+    {
+        if(globalPower == true)
+        {
+            globalPower = false;
+        }
+
+        else if(globalPower == false)
+        {
+            globalPower = true;
+        }
     }
 }

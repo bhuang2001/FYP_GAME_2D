@@ -58,15 +58,10 @@ public class AnimationController : MonoBehaviour
     void Start()
     {
 
-        
-        message = Instantiate((GameObject)Resources.Load("Prefab/Message prefab"));
-        message.name = "Message";
-        message.tag = "Message";
-        spriteRendrer = message.GetComponent<SpriteRenderer>();
-        spriteRendrer.sortingOrder = 2;
-        oldMessage = message;
-
         parent = GameObject.Find("Data Transmission").transform;
+        
+
+        
          // deletes the previous set of animated links if it exists
         if (transform.childCount > 0)
         {
@@ -75,6 +70,15 @@ public class AnimationController : MonoBehaviour
                 Destroy(child.gameObject);
             }
         }
+        // create the data packet 
+        message = Instantiate((GameObject)Resources.Load("Prefab/Message prefab"));
+        message.transform.SetParent(parent);
+        message.name = "Message";
+        message.tag = "Message";
+        spriteRendrer = message.GetComponent<SpriteRenderer>();
+        spriteRendrer.sortingOrder = 2;
+        oldMessage = message;
+        
         dataTransmission = GameObject.Find("Data Transmission").GetComponent<DataTransmission>();
         linkQuantity = dataTransmission.animatedLinks.Count;
         // every link has a start,mid,end coordinate so there are 3 coordinates per link

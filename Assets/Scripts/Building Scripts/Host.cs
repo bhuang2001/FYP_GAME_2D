@@ -5,6 +5,8 @@ using System;
 
 public class Host : MonoBehaviour
 {
+    //connected is true when the link interface is up, false when the link is down
+    public bool connected;
     // store the host name
     public string hostName;
     // store number of the host
@@ -17,17 +19,48 @@ public class Host : MonoBehaviour
     // Start is called before the first frame update
     public string connectedRouter;
     private Collider2D temp;
-    private Link link;
+    // link is for collision detection, link2 is for checking on/off status of the connected link interface
+    private Link link, link2;
+
+    public LayerMask collisionMask;
 
     void Start()
     {
-
+        hostName = this.gameObject.name;
+        //gameObject.layer = LayerMask.NameToLayer("Buildings");
+        //collisionMask = Physics2D.GetLayerCollisionMask(gameObject.layer);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        /*
+        if(link2 == null)
+        {
+            link2 = GameObject.Find(linkInterface).GetComponent<Link>();
+        }
+        else if(link2 != null)
+        {
+            if(link2.status == true)
+            {
+                connected = true;
+            }
+            else
+            {
+                connected = false;
+            }
+        }*/
+        if(link != null)
+        {
+            if(link.status == true)
+            {
+                connected = true;
+            }
+            else
+            {
+                connected = false;
+            }
+        }
     }
 
     void OnTriggerEnter2D (Collider2D other)
@@ -35,12 +68,15 @@ public class Host : MonoBehaviour
         temp = other;
         Collider2D [] myCollider = new Collider2D [1];
         ContactFilter2D contactFilter = new ContactFilter2D().NoFilter();
-        int colliderNum = other.OverlapCollider(contactFilter,myCollider);
         
-        // host knows which link game object it is connected to
-        linkInterface = other.transform.parent.name;
-        Invoke("AddConnectedRouter",0.5f);
-        Invoke("AssignIPAddress",0.5f);
+        int colliderNum = other.OverlapCollider(contactFilter,myCollider);
+        if(other.gameObject.CompareTag("LinkCollider"))
+        {
+            // host knows which link game object it is connected to
+            linkInterface = other.transform.parent.name;
+            Invoke("AddConnectedRouter",0.5f);
+            Invoke("AssignIPAddress",0.5f);
+        }
     }
 
     void AddConnectedRouter()

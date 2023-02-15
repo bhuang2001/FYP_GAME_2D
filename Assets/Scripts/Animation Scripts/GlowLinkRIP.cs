@@ -29,20 +29,24 @@ public class GlowLinkRIP : MonoBehaviour
         }
     }
 
-
+    // Lights up all links that are connected to routers as blue
+    // Make routing information updates(blue) show in front of the data transmission lines
     private void GlowLinks()
     {
         LineRenderer lr;
         lr = GameObject.Find(this.gameObject.name).GetComponent<LineRenderer>();
+        lr. sortingOrder = 3;
         SetColourGradient(blue,lr);
         
     }
 
     // Returns the links back to white colour
+    // Set back to lowest sorting order when it returns to white
     private void DisableGlow()
     {    
     LineRenderer lr;
     lr = GameObject.Find(this.gameObject.name).GetComponent<LineRenderer>();
+    lr.sortingOrder = 0;
     SetColourGradient(white,lr);
     finished = true;
         

@@ -65,6 +65,8 @@ public class DataTransmission : MonoBehaviour
             host = selectionManager.receivingHost;
             receiver = host.GetComponent<Host>();
 
+        
+
             if(transmitter != null && receiver != null && pathDetermined == false)
             {
             // If there is already an animation controller component , then destroy it first 
@@ -141,17 +143,64 @@ public class DataTransmission : MonoBehaviour
 
     private void ForwardToLink(Router currRouter, Router endRouter)
     {   
+        // If link is down or the sender/receiver is not connected,
+        // then cancel the animation since it is not possible 
+        // and stop it from trying to calculate a path 
+        link = GameObject.Find(outgoingLinkName).GetComponent<Link>();
+        if(link.status == false || transmitter.connected == false || receiver.connected == false)
+        {
+            // Destroy the previous animated links and message sprite
+            if (transform.childCount > 0)
+            {
+                foreach(Transform child in transform)
+                {
+                    Destroy(child.gameObject);
+                }
+            }
+            Destroy(GetComponent<AnimationController>());
+            // Clears all the links in the previous transmission
+            animatedLinks.Clear();
+            Debug.Log ("Links connected to the hosts are down ");
+            Debug.Log ("Links Cleared");
+            // set pathDetermined to true so that it stops calculating a path
+            pathDetermined = true;
+            // This resets the algorithm when it calculates the path again
+            outgoingLinkName = "None";
+        }
     // If the current router it has reached is not the last router then keep transmitting on the links
     // until it is reached
-        if(currRouter != endRouter)
+        else if(currRouter != endRouter)
         {
         // Find the link game object it must be forwarded to 
             outgoingLinkName = currRouter.outgoingLinks[last];
+            // outgoingLinkName is None whenever the link is down , hence it appears as none in a forwarding table
+            if(outgoingLinkName == "None")
+            {
+                // Destroy the previous animated links and message sprite
+                if (transform.childCount > 0)
+                {
+                    foreach(Transform child in transform)
+                    {
+                        Destroy(child.gameObject);
+                    }
+                }
+                Destroy(GetComponent<AnimationController>());
+            // Clears all the links in the previous transmission
+                animatedLinks.Clear();
+                Debug.Log ("Links connected to the hosts are down ");
+                Debug.Log ("Links Cleared");
+            // set pathDetermined to true so that it stops calculating a path
+                pathDetermined = true;
+                outgoingLinkName = "None";
+            }
+            else
+            {
             linkObject = GameObject.Find(outgoingLinkName);
         // Add to animatedLinks list
             animatedLinks.Add(linkObject);
         //This is where I use some sort of visual cue and/or audio cue to show the data being transmitted
             Debug.Log("Data is being forwarded on " + outgoingLinkName + " right now ");
+            }
         }
     // If it is the end router then the last link to be transmitted onto is the one connecting to the receiver 
     // host, and then it should reset current router back to the start router so the animation can be looped
