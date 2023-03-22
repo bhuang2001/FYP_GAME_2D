@@ -8,6 +8,12 @@ using UnityEngine.EventSystems;
 // temp tile map = foreground tile map
 public class BuildingSystem : MonoBehaviour
 {
+<<<<<<< Updated upstream:Assets/Scripts/BuildingSystem.cs
+=======
+    // public so RoutingInformation can read from it
+    public int routerNum ;
+    public int hostNum ; 
+>>>>>>> Stashed changes:Assets/Scripts/Building Scripts/BuildingSystem.cs
     public static BuildingSystem current;
     public GridLayout gridlayout;
     public Tilemap backgroundTilemap;
