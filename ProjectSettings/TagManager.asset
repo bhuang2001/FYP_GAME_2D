@@ -3,17 +3,24 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - NetworkEntities
+  - Router
+  - Host
+  - Graph
+  - Message
+  - Link
+  - LinkCollider
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Ignore Triggers
   - Water
   - UI
   - 
   - 
-  - 
+  - Post Processing
   - 
   - 
   - 
