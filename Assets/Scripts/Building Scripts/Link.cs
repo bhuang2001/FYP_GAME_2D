@@ -256,7 +256,7 @@ public class Link : MonoBehaviour
         //This is the beginning point of the line, store it in entity1
         if(myCollider[0].gameObject.name == "Collider1")
         {
-            Debug.Log("Collider is Collider1");
+            //Debug.Log("Collider is Collider1");
             // a line could trigger a collision with another line and place the name of the collider instead
             if (other.gameObject.CompareTag("Router") || other.gameObject.CompareTag("Host"))
             {
@@ -269,7 +269,7 @@ public class Link : MonoBehaviour
         }
         else if (myCollider[0].gameObject.name == "Collider2")
         {
-            Debug.Log("Collider is Collider2");
+            //Debug.Log("Collider is Collider2");
             if (other.gameObject.CompareTag("Router") || other.gameObject.CompareTag("Host"))
             {
                 entity2 = other.gameObject.name;
@@ -462,7 +462,7 @@ public class Link : MonoBehaviour
     {
         routers = GameObject.FindGameObjectsWithTag("Router");
         // j = 1 here because index results in router prefab which we are not interested in
-        for( int j = 1 ; j < routers.Length; j++)
+        for( int j = 0 ; j < routers.Length; j++)
         {
         updateRouter = GameObject.Find(routers[j].name).GetComponent<Router>();
         updateRouter.update = true;

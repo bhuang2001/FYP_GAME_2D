@@ -13,17 +13,17 @@ public class LinkManager : MonoBehaviour
     private Vector3 endMousePos;
     public Material material;
     // to keep track of the number of links, for naming purposes
-    private int currLines = 0;
+    public int currLines = 0;
     // when a button is pressed to add link, this turns true
     private bool addLink = false;
     public bool costEntered;
     // number to keep track of how many times the orientation of the link is pressed
     private int toggleCount = 0;
     // subnetNum keeps track of the number of subnets in each quadrant 
-    private int subnetNum1 = 0;
-    private int subnetNum2 = 0;
-    private int subnetNum3 = 0;
-    private int subnetNum4 = 0;
+    public int subnetNum1 = 0;
+    public int subnetNum2 = 0;
+    public int subnetNum3 = 0;
+    public int subnetNum4 = 0;
     public GameObject enterCostUI;
     public TMP_InputField inputField;
     private Link currentLink;
@@ -42,7 +42,7 @@ public class LinkManager : MonoBehaviour
         placeLink();
     }
 
-    void createLine() 
+    public void createLine() 
     {
         line = new GameObject("Link" + currLines).AddComponent<LineRenderer>();
        line.material = material;
@@ -157,24 +157,24 @@ public class LinkManager : MonoBehaviour
     public void assignSubnetIP()
     {
         // this checks to see if the starting point of the link is in quadrant 1
-        if(currentLink.startPos.y > ((-0.5*currentLink.startPos.x) + 4.27)  
-        && currentLink.startPos.y > ((0.5 * currentLink.startPos.x) - 2.3))
+        if(currentLink.startPos.y > ((-0.5*currentLink.startPos.x) + 0)  
+        && currentLink.startPos.y > ((0.5 * currentLink.startPos.x) + 1.3))
         {
             // this increments the subnet portion by 1 e.g 128.128.1.0
             currentLink.subnetIP = 0x80800000 + (uint)((subnetNum1 + 1)*256);
             subnetNum1++;
         }
         // this checks to see if the starting point of the link is in quadrant 2
-        else if(currentLink.startPos.y < ((-0.5*currentLink.startPos.x) + 4.27)  
-        && currentLink.startPos.y > ((0.5 * currentLink.startPos.x) - 2.3))
+        else if(currentLink.startPos.y < ((-0.5*currentLink.startPos.x) + 0)  
+        && currentLink.startPos.y > ((0.5 * currentLink.startPos.x) + 1.3))
         {
             // this increments the subnet portion by 1 e.g 128.192.1.0
             currentLink.subnetIP = 0x80c00000  + (uint)((subnetNum2 + 1)*256);
             subnetNum2++;
         }
         // this checks to see if the starting point of the link is in quadrant 3
-        else if(currentLink.startPos.y < ((-0.5*currentLink.startPos.x) + 4.27)  
-        && currentLink.startPos.y < ((0.5 * currentLink.startPos.x) - 2.3))
+        else if(currentLink.startPos.y < ((-0.5*currentLink.startPos.x) + 0)  
+        && currentLink.startPos.y < ((0.5 * currentLink.startPos.x) + 1.3))
         {
             // this increments the subnet portion by 1 e.g 128.224.1.0
             currentLink.subnetIP = 0x80e00000  + (uint)((subnetNum3 + 1)*256);

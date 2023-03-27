@@ -50,6 +50,29 @@ public class DataTransmission : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // If user does not want to send data, turn off the animation if it is running
+        if(selectionManager.sendData == false)
+        {
+            if (this.gameObject.GetComponent<AnimationController>() != null)
+                {
+                    Destroy(GetComponent<AnimationController>());
+                    // Clears all the links in the previous transmission
+                    animatedLinks.Clear();
+                    
+                    // deletes the previous set of animated links if it exists
+                    if (transform.childCount > 0)
+                    {
+                        foreach(Transform child in transform)
+                        {
+                            Destroy(child.gameObject);
+                        }
+                    }
+                    
+                    Debug.Log ("Previous Animation Controller Component Destroyed");
+                    Debug.Log ("Links Cleared");
+                }
+        }
+
         // If user is not sending data (when button is not pressed), then set the path determined to be false
         if(selectionManager.done == false)
         {
@@ -76,6 +99,16 @@ public class DataTransmission : MonoBehaviour
                     Destroy(GetComponent<AnimationController>());
                     // Clears all the links in the previous transmission
                     animatedLinks.Clear();
+                    /*
+                    // deletes the previous set of animated links if it exists
+                    if (transform.childCount > 0)
+                    {
+                        foreach(Transform child in transform)
+                        {
+                            Destroy(child.gameObject);
+                        }
+                    }
+                    */
                     Debug.Log ("Previous Animation Controller Component Destroyed");
                     Debug.Log ("Links Cleared");
                 }

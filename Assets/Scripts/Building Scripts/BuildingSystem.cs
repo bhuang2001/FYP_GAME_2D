@@ -10,15 +10,14 @@ public class BuildingSystem : MonoBehaviour
 {
     // public so RoutingInformation can read from it
     public int routerNum ;
-    private int hostNum ; 
+    public int hostNum ; 
     public static BuildingSystem current;
     public GridLayout gridlayout;
     public Tilemap backgroundTilemap;
     public Tilemap foregroundTilemap;
     
     private static Dictionary<TileType, TileBase> tileBases = new Dictionary<TileType, TileBase>();
-    public Building temp; // changed to public to use with selectionmanager script
-
+    private Building temp;
     private Vector3 prevPos;
     private BoundsInt prevArea;
 

@@ -61,8 +61,8 @@ private DataTransmission dataTransmission;
                 updateOSPF = true;
                 // Tell routers to update its forwarding tables
                 GameObject [] routers = GameObject.FindGameObjectsWithTag("Router");
-                // j = 1 here because index results in router prefab which we are not interested in
-                for(int j = 1 ; j < routers.Length; j++)
+                // changed to j = 0 after removing router prefab from hierarchy
+                for(int j = 0 ; j < routers.Length; j++)
                 {
                 Router routerComponent = GameObject.Find(routers[j].name).GetComponent<Router>();
                 routerComponent.update = true;
@@ -234,6 +234,7 @@ private DataTransmission dataTransmission;
         return sourceRouter;
     }
 
+// Unused method
     private void AnimateRIP()
     {
         int i = 0;

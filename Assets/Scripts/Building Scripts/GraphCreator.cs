@@ -5,11 +5,22 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using PriorityQueue;
-
+using UnityEngine.UI;
 
 
 public class GraphCreator : MonoBehaviour
 {
+    // For changing colours depending if OSPF/RIP is on/off.
+    // on is green and off is white
+    public Color onColour, offColour;
+    public GameObject OSPFButton,RIPButton;
+// For changing colours depending on on/off
+// The button is green when power is on , red when power is off 
+public Color powerOnColour, powerOffColour, highlightedColour;
+// To access the button's game object
+public GameObject togglePower;
+// To access the button properties of the toggle power button
+public Button button;
 // stores the status of the network power 
 public bool globalPower;
 // the boolean variables keep track whether or not OSPF or RIP protocol is on
@@ -23,10 +34,10 @@ private GameObject [] routers;
 private Router routerComponent;
 // PERIODIC interval set for RIP, default is 30 seconds and timeElapsed keeps track of the amount of time passed
 public float periodicInterval, timeElapsed;
-public const int maxRouters = 10;
+public const int maxRouters = 25;
 public int currentRouterNum = -1;
 public int prevRouterNum = 0;
-// Using a 10 by 10 adj matrix for now meaning there is a limitation of 10 routers only
+// Using a 25 by 25 adj matrix  meaning there is a limitation of 25 routers only
 public int[,] adjMatrixOSPF = new int[maxRouters,maxRouters];
 public int[,] adjMatrixRIP = new int[maxRouters,maxRouters];
 // adjMatrix to store the link interfaces for each connection from router to router
@@ -84,6 +95,7 @@ public string[,] InitAdjMatrixLinks(string[,] AdjMatrix)
     void Start()
     {   
         globalPower = true;
+        button = togglePower.GetComponent<Button>();
         RI = GameObject.Find("Routing Information");
         RIComponent = GameObject.Find("Routing Information").GetComponent<RoutingInformation>();
         dataTransmission = GameObject.Find("Data Transmission").GetComponent<DataTransmission>();
@@ -169,6 +181,10 @@ public string[,] InitAdjMatrixLinks(string[,] AdjMatrix)
 
     public void EnableOSPF()
     {
+        // When OSPF is enabled, turn the button to green to indicate it is in OSPF mode
+        TurnButtonGreen(OSPFButton);
+        // turn RIP button to white to indicate it is off while it is in OSPF mode
+        TurnButtonWhite(RIPButton);
         // turn on OSPF
         OSPF = true;
         // turns on updateOSPF which controls the animation of links
@@ -179,8 +195,8 @@ public string[,] InitAdjMatrixLinks(string[,] AdjMatrix)
         // Send update notifications to all routers so it can run Dijkstra's algorithm to update its routing
         // information.
         routers = GameObject.FindGameObjectsWithTag("Router");
-        // j = 1 here because index results in router prefab which we are not interested in
-        for( int j = 1 ; j < routers.Length; j++)
+        // changed j to 0 after router prefab is removed
+        for( int j = 0 ; j < routers.Length; j++)
         {
         routerComponent = GameObject.Find(routers[j].name).GetComponent<Router>();
         routerComponent.update = true;
@@ -193,6 +209,10 @@ public string[,] InitAdjMatrixLinks(string[,] AdjMatrix)
 
     public void EnableRIP()
     {
+        // When it is in RIP mode, turn RIP button to green to indicate it is on
+        TurnButtonGreen(RIPButton);
+        // When it is in RIP mode, turn OSPF button to white to indicate it is on
+        TurnButtonWhite(OSPFButton);
         OSPF = false;
         RIP = true;
         // update RIP should be true as well so that the routing information updates as it is turned on
@@ -201,16 +221,53 @@ public string[,] InitAdjMatrixLinks(string[,] AdjMatrix)
         timeElapsed = 0f;
     }
 
+    // Turn button green for when OSPF or RIP is on 
+    private void TurnButtonGreen(GameObject obj)
+    {
+        Button objectButton = obj.GetComponent<Button>();
+        ColorBlock cb = objectButton.colors;
+        cb.normalColor = onColour;
+        cb.highlightedColor = highlightedColour;
+        cb.pressedColor = onColour;
+        cb.selectedColor = onColour;
+        objectButton.colors = cb;
+    }
+    // Turn button back to white when OSPF or RIP is off
+    private void TurnButtonWhite(GameObject obj)
+    {
+        Button objectButton = obj.GetComponent<Button>();
+        ColorBlock cb = objectButton.colors;
+        cb.normalColor = offColour;
+        cb.highlightedColor = highlightedColour;
+        cb.pressedColor = offColour;
+        cb.selectedColor = offColour;
+        objectButton.colors = cb;
+    }
+
     public void TogglePower()
     {
         if(globalPower == true)
         {
             globalPower = false;
+            // initializing colour block to red when global power is off
+            ColorBlock cb = button.colors;
+            cb.normalColor = powerOffColour;
+            cb.highlightedColor = highlightedColour;
+            cb.pressedColor = powerOffColour;
+            cb.selectedColor = powerOffColour;
+            button.colors = cb;
         }
 
         else if(globalPower == false)
         {
             globalPower = true;
+            // initializing colour block to green when global power is on
+            ColorBlock cb = button.colors;
+            cb.normalColor = powerOnColour;
+            cb.highlightedColor = highlightedColour;
+            cb.pressedColor = powerOnColour;
+            cb.selectedColor = powerOnColour;
+            button.colors = cb;
         }
     }
 }

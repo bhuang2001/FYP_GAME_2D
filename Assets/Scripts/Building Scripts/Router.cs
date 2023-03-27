@@ -13,8 +13,8 @@ public class Router : MonoBehaviour
     public bool prevRouterStatus,routerStatus ;
     //  to store previuos status of global power of network
     public bool prevGlobalPower;
-    // Using maximum routers as 10 for now
-    public const int maxRouters = 10;
+    // Using maximum routers as 25 
+    public const int maxRouters = 25;
     // Adjacency matrixes for each OSPF, RIP and the one that stores which one is being used
     public int[,] globalAdjacencyMatrix = new int[maxRouters,maxRouters];
     //public int[,] globalAdjacencyMatrixOSPF = new int[maxRouters,maxRouters];
